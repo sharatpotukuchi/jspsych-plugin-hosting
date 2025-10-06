@@ -1,7 +1,8 @@
 // Custom Columbia Card Task Plugin for Full Performance Data
 // Designed to capture complete performance data from all rounds
 
-var CustomCCTPlugin = (function() {
+// Make the plugin globally available
+window.CustomCCTPlugin = (function() {
   'use strict';
 
   var info = {
@@ -169,7 +170,4 @@ var CustomCCTPlugin = (function() {
   };
 })();
 
-// Register the plugin
-if (typeof window !== 'undefined' && window.jsPsych) {
-  window.jsPsych.addPlugin('custom-cct', CustomCCTPlugin);
-}
+// Plugin is now available as window.CustomCCTPlugin
