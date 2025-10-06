@@ -1,145 +1,146 @@
-import { ParameterType } from 'jspsych';
+var jsPsychPluginColumbiaCardTask = (function (jspsych) {
+  'use strict';
 
-var version = "1.0.0";
+  var version = "1.0.0";
 
-const info = {
-  name: "plugin-columbia-card-task",
-  version,
-  parameters: {
-    /** Number of cards to display in the grid */
-    num_cards: {
-      type: ParameterType.INT,
-      default: 32
-    },
-    /** Number of loss cards in the deck */
-    num_loss_cards: {
-      type: ParameterType.INT,
-      default: 3
-    },
-    /** Number of columns in the card grid */
-    grid_columns: {
-      type: ParameterType.INT,
-      default: 8
-    },
-    /** Card width in pixels */
-    card_width: {
-      type: ParameterType.INT,
-      default: 60
-    },
-    /** Card height in pixels */
-    card_height: {
-      type: ParameterType.INT,
-      default: 80
-    },
-    /** Duration of card flip animation in milliseconds */
-    flip_duration: {
-      type: ParameterType.INT,
-      default: 300
-    },
-    /** Points lost when selecting a loss card */
-    loss_value: {
-      type: ParameterType.INT,
-      default: -250
-    },
-    /** Points gained when selecting a gain card */
-    gain_value: {
-      type: ParameterType.INT,
-      default: 10
-    },
-    /** Text for the main instructions */
-    instructions: {
-      type: ParameterType.STRING,
-      default: "Tap the cards to flip them over. Gain cards give you points, loss cards lose points!"
-    },
-    /** Text label for gain cards */
-    gain_cards_label: {
-      type: ParameterType.STRING,
-      default: "Gain Cards"
-    },
-    /** Text label for loss cards */
-    loss_cards_label: {
-      type: ParameterType.STRING,
-      default: "Loss Cards"
-    },
-    /** Text label for the score display */
-    score_label: {
-      type: ParameterType.STRING,
-      default: "Points:"
-    },
-    /** Text for the continue button */
-    continue_button_text: {
-      type: ParameterType.STRING,
-      default: "Stop"
-    },
-    /** Symbol displayed on card fronts */
-    card_front_symbol: {
-      type: ParameterType.STRING,
-      default: "?"
-    },
-    /** Starting score for the trial */
-    starting_score: {
-      type: ParameterType.INT,
-      default: 0
-    }
-  },
-  data: {
-    /** Array of card indices that were clicked */
-    cards_clicked: {
-      type: ParameterType.OBJECT
-    },
-    /** Order in which cards were clicked */
-    click_order: {
-      type: ParameterType.OBJECT
-    },
-    /** Total number of cards clicked */
-    total_clicks: {
-      type: ParameterType.INT
-    },
-    /** Response time for each card click */
-    response_times: {
-      type: ParameterType.OBJECT
-    },
-    /** Array of values for each card (gain/loss values) */
-    card_values: {
-      type: ParameterType.OBJECT
-    },
-    /** Total points earned/lost during the trial */
-    total_points: {
-      type: ParameterType.INT
-    },
-    /** Array of points gained/lost for each clicked card */
-    points_per_click: {
-      type: ParameterType.OBJECT
-    }
-  },
-  // When you run build on your plugin, citations will be generated here based on the information in the CITATION.cff file.
-  citations: "__CITATIONS__"
-};
-class ColumbiaCardTaskPlugin {
-  constructor(jsPsych) {
-    this.jsPsych = jsPsych;
-  }
-  static {
-    this.info = info;
-  }
-  trial(display_element, trial) {
-    const start_time = performance.now();
-    const cards_clicked = [];
-    const click_order = [];
-    const response_times = [];
-    const points_per_click = [];
-    let click_count = 0;
-    let total_points = trial.starting_score;
-    let card_values = new Array(trial.num_cards);
-    for (let i = 0; i < trial.num_cards; i++) {
-      if (i < trial.num_loss_cards) {
-        card_values[i] = trial.loss_value;
-      } else {
-        card_values[i] = trial.gain_value;
+  const info = {
+    name: "plugin-columbia-card-task",
+    version,
+    parameters: {
+      /** Number of cards to display in the grid */
+      num_cards: {
+        type: jspsych.ParameterType.INT,
+        default: 32
+      },
+      /** Number of loss cards in the deck */
+      num_loss_cards: {
+        type: jspsych.ParameterType.INT,
+        default: 3
+      },
+      /** Number of columns in the card grid */
+      grid_columns: {
+        type: jspsych.ParameterType.INT,
+        default: 8
+      },
+      /** Card width in pixels */
+      card_width: {
+        type: jspsych.ParameterType.INT,
+        default: 60
+      },
+      /** Card height in pixels */
+      card_height: {
+        type: jspsych.ParameterType.INT,
+        default: 80
+      },
+      /** Duration of card flip animation in milliseconds */
+      flip_duration: {
+        type: jspsych.ParameterType.INT,
+        default: 300
+      },
+      /** Points lost when selecting a loss card */
+      loss_value: {
+        type: jspsych.ParameterType.INT,
+        default: -250
+      },
+      /** Points gained when selecting a gain card */
+      gain_value: {
+        type: jspsych.ParameterType.INT,
+        default: 10
+      },
+      /** Text for the main instructions */
+      instructions: {
+        type: jspsych.ParameterType.STRING,
+        default: "Tap the cards to flip them over. Gain cards give you points, loss cards lose points!"
+      },
+      /** Text label for gain cards */
+      gain_cards_label: {
+        type: jspsych.ParameterType.STRING,
+        default: "Gain Cards"
+      },
+      /** Text label for loss cards */
+      loss_cards_label: {
+        type: jspsych.ParameterType.STRING,
+        default: "Loss Cards"
+      },
+      /** Text label for the score display */
+      score_label: {
+        type: jspsych.ParameterType.STRING,
+        default: "Points:"
+      },
+      /** Text for the continue button */
+      continue_button_text: {
+        type: jspsych.ParameterType.STRING,
+        default: "Stop"
+      },
+      /** Symbol displayed on card fronts */
+      card_front_symbol: {
+        type: jspsych.ParameterType.STRING,
+        default: "?"
+      },
+      /** Starting score for the trial */
+      starting_score: {
+        type: jspsych.ParameterType.INT,
+        default: 0
       }
+    },
+    data: {
+      /** Array of card indices that were clicked */
+      cards_clicked: {
+        type: jspsych.ParameterType.OBJECT
+      },
+      /** Order in which cards were clicked */
+      click_order: {
+        type: jspsych.ParameterType.OBJECT
+      },
+      /** Total number of cards clicked */
+      total_clicks: {
+        type: jspsych.ParameterType.INT
+      },
+      /** Response time for each card click */
+      response_times: {
+        type: jspsych.ParameterType.OBJECT
+      },
+      /** Array of values for each card (gain/loss values) */
+      card_values: {
+        type: jspsych.ParameterType.OBJECT
+      },
+      /** Total points earned/lost during the trial */
+      total_points: {
+        type: jspsych.ParameterType.INT
+      },
+      /** Array of points gained/lost for each clicked card */
+      points_per_click: {
+        type: jspsych.ParameterType.OBJECT
+      }
+    },
+    // When you run build on your plugin, citations will be generated here based on the information in the CITATION.cff file.
+    citations: "__CITATIONS__"
+  };
+  class ColumbiaCardTaskPlugin {
+    constructor(jsPsych) {
+      this.jsPsych = jsPsych;
     }
-    card_values = this.jsPsych.randomization.shuffle(card_values);
-    const css = `
+    static {
+      this.info = info;
+    }
+    trial(display_element, trial) {
+      const start_time = performance.now();
+      const cards_clicked = [];
+      const click_order = [];
+      const response_times = [];
+      const points_per_click = [];
+      let click_count = 0;
+      let total_points = trial.starting_score;
+      let card_values = new Array(trial.num_cards);
+      for (let i = 0; i < trial.num_cards; i++) {
+        if (i < trial.num_loss_cards) {
+          card_values[i] = trial.loss_value;
+        } else {
+          card_values[i] = trial.gain_value;
+        }
+      }
+      card_values = this.jsPsych.randomization.shuffle(card_values);
+      const css = `
       <style>
         .cct-container {
           display: flex;
@@ -309,10 +310,10 @@ class ColumbiaCardTaskPlugin {
         }
       </style>
     `;
-    let html = css;
-    html += '<div class="cct-container">';
-    html += '<div class="cct-top-row">';
-    html += `
+      let html = css;
+      html += '<div class="cct-container">';
+      html += '<div class="cct-top-row">';
+      html += `
       <div class="cct-info-panel">
         <div class="cct-info-item">
           <div class="cct-mini-card gain">+${trial.gain_value}</div>
@@ -324,15 +325,15 @@ class ColumbiaCardTaskPlugin {
         </div>
       </div>
     `;
-    html += `<div class="cct-score">${trial.score_label + " "} <span id="score-display">${trial.starting_score}</span></div>`;
-    html += "</div>";
-    html += `<div class="cct-instructions">${trial.instructions}</div>`;
-    html += '<div class="cct-grid">';
-    for (let i = 0; i < trial.num_cards; i++) {
-      const is_loss_card = card_values[i] === trial.loss_value;
-      const card_class = is_loss_card ? "loss" : "gain";
-      const display_value = is_loss_card ? trial.loss_value : `+${trial.gain_value}`;
-      html += `
+      html += `<div class="cct-score">${trial.score_label + " "} <span id="score-display">${trial.starting_score}</span></div>`;
+      html += "</div>";
+      html += `<div class="cct-instructions">${trial.instructions}</div>`;
+      html += '<div class="cct-grid">';
+      for (let i = 0; i < trial.num_cards; i++) {
+        const is_loss_card = card_values[i] === trial.loss_value;
+        const card_class = is_loss_card ? "loss" : "gain";
+        const display_value = is_loss_card ? trial.loss_value : `+${trial.gain_value}`;
+        html += `
         <div class="cct-card" data-card-index="${i}">
           <div class="cct-card-inner">
             <div class="cct-card-face cct-card-front">${trial.card_front_symbol}</div>
@@ -340,50 +341,52 @@ class ColumbiaCardTaskPlugin {
           </div>
         </div>
       `;
+      }
+      html += "</div>";
+      html += `<button class="jspsych-btn">${trial.continue_button_text}</button>`;
+      html += "</div>";
+      display_element.innerHTML = html;
+      const score_display = display_element.querySelector("#score-display");
+      const card_elements = display_element.querySelectorAll(".cct-card");
+      card_elements.forEach((card_element) => {
+        const handleCardClick = (e) => {
+          e.preventDefault();
+          const card_index = parseInt(card_element.dataset.cardIndex);
+          if (cards_clicked.includes(card_index)) {
+            return;
+          }
+          const click_time = performance.now();
+          const card_value = card_values[card_index];
+          cards_clicked.push(card_index);
+          click_order.push(click_count);
+          response_times.push(click_time - start_time);
+          points_per_click.push(card_value);
+          total_points += card_value;
+          click_count++;
+          score_display.textContent = total_points.toString();
+          card_element.classList.add("flipped");
+          card_element.style.pointerEvents = "none";
+        };
+        card_element.addEventListener("click", handleCardClick);
+        card_element.addEventListener("touchend", handleCardClick);
+      });
+      const continue_button = display_element.querySelector(".jspsych-btn");
+      continue_button.addEventListener("click", () => {
+        const trial_data = {
+          cards_clicked,
+          click_order,
+          total_clicks: cards_clicked.length,
+          response_times,
+          card_values,
+          total_points,
+          points_per_click
+        };
+        this.jsPsych.finishTrial(trial_data);
+      });
     }
-    html += "</div>";
-    html += `<button class="jspsych-btn">${trial.continue_button_text}</button>`;
-    html += "</div>";
-    display_element.innerHTML = html;
-    const score_display = display_element.querySelector("#score-display");
-    const card_elements = display_element.querySelectorAll(".cct-card");
-    card_elements.forEach((card_element) => {
-      const handleCardClick = (e) => {
-        e.preventDefault();
-        const card_index = parseInt(card_element.dataset.cardIndex);
-        if (cards_clicked.includes(card_index)) {
-          return;
-        }
-        const click_time = performance.now();
-        const card_value = card_values[card_index];
-        cards_clicked.push(card_index);
-        click_order.push(click_count);
-        response_times.push(click_time - start_time);
-        points_per_click.push(card_value);
-        total_points += card_value;
-        click_count++;
-        score_display.textContent = total_points.toString();
-        card_element.classList.add("flipped");
-        card_element.style.pointerEvents = "none";
-      };
-      card_element.addEventListener("click", handleCardClick);
-      card_element.addEventListener("touchend", handleCardClick);
-    });
-    const continue_button = display_element.querySelector(".jspsych-btn");
-    continue_button.addEventListener("click", () => {
-      const trial_data = {
-        cards_clicked,
-        click_order,
-        total_clicks: cards_clicked.length,
-        response_times,
-        card_values,
-        total_points,
-        points_per_click
-      };
-      this.jsPsych.finishTrial(trial_data);
-    });
   }
-}
 
-export { ColumbiaCardTaskPlugin as default };
-//# sourceMappingURL=index.js.map
+  return ColumbiaCardTaskPlugin;
+
+})(jsPsychModule);
+//# sourceMappingURL=https://unpkg.com/@jspsych-contrib/plugin-columbia-card-task@1.0.0/dist/index.browser.js.map
