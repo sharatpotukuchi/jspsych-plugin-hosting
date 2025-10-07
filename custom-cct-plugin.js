@@ -82,6 +82,13 @@ window.CustomCCTPlugin = (function(jspsych) {
 
     // Create HTML
     var html = '<div class="cct-container">';
+    
+    // Add legend/header information
+    html += '<div class="cct-header">';
+    html += '<div class="cct-deck-info">Deck: Gain Cards ' + (num_cards - num_loss_cards) + ', Loss Cards ' + num_loss_cards + '</div>';
+    html += '<div class="cct-points-info">Points: Gain +' + gain_value + ', Loss ' + loss_value + '</div>';
+    html += '</div>';
+    
     html += '<div class="cct-score">Points: <span id="cct-points">0</span></div>';
     html += '<div class="cct-cards">';
     
@@ -101,6 +108,8 @@ window.CustomCCTPlugin = (function(jspsych) {
     // Add CSS
     var css = `
       .cct-container { text-align: center; padding: 20px; }
+      .cct-header { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+      .cct-deck-info, .cct-points-info { font-size: 14px; color: #555; margin: 4px 0; }
       .cct-score { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
       .cct-cards { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; margin-bottom: 20px; }
       .cct-card { width: 60px; height: 80px; border: 2px solid #ccc; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; }
@@ -181,7 +190,12 @@ window.CustomCCTPlugin = (function(jspsych) {
         immediate_feedback: immediate_feedback
       };
       
-      this.jsPsych.finishTrial(trial_data);
+      // Access jsPsych instance from the trial context
+      if (typeof window._globalJsPsych !== 'undefined') {
+        window._globalJsPsych.finishTrial(trial_data);
+      } else {
+        console.error('jsPsych instance not found');
+      }
     }
 
     // Add event listeners
