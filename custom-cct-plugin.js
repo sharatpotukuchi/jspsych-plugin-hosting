@@ -1,22 +1,54 @@
 // Custom Columbia Card Task Plugin for Full Performance Data
 // Designed to capture complete performance data from all rounds
 
-// Make the plugin globally available as a proper jsPsych plugin object
-window.CustomCCTPlugin = {
-  info: {
+// Make the plugin globally available using the same pattern as the original plugin
+window.CustomCCTPlugin = (function(jspsych) {
+  'use strict';
+
+  const info = {
     name: 'custom-cct',
     parameters: {
-      num_cards: { type: 'int', default: 32 },
-      num_loss_cards: { type: 'int', default: 3 },
-      gain_value: { type: 'int', default: 10 },
-      loss_value: { type: 'int', default: -250 },
-      hot: { type: 'bool', default: false },
-      immediate_feedback: { type: 'bool', default: false },
-      button_label_stop: { type: 'string', default: 'END ROUND' }
+      num_cards: {
+        type: jspsych.ParameterType.INT,
+        default: 32
+      },
+      num_loss_cards: {
+        type: jspsych.ParameterType.INT,
+        default: 3
+      },
+      gain_value: {
+        type: jspsych.ParameterType.INT,
+        default: 10
+      },
+      loss_value: {
+        type: jspsych.ParameterType.INT,
+        default: -250
+      },
+      hot: {
+        type: jspsych.ParameterType.BOOL,
+        default: false
+      },
+      immediate_feedback: {
+        type: jspsych.ParameterType.BOOL,
+        default: false
+      },
+      button_label_stop: {
+        type: jspsych.ParameterType.STRING,
+        default: 'END ROUND'
+      }
     }
-  },
+  };
 
-  trial: function(display_element, trial) {
+  class CustomCCTPlugin {
+    constructor(jsPsych) {
+      this.jsPsych = jsPsych;
+    }
+    
+    static {
+      this.info = info;
+    }
+
+    trial(display_element, trial) {
     var num_cards = trial.num_cards || 32;
     var num_loss_cards = trial.num_loss_cards || 3;
     var gain_value = trial.gain_value || 10;
@@ -160,7 +192,11 @@ window.CustomCCTPlugin = {
 
     var button = display_element.querySelector('#cct-end-round');
     button.addEventListener('click', endRound.bind(this));
+    }
   }
-};
+
+  return CustomCCTPlugin;
+
+})(jsPsychModule);
 
 // Plugin is now available as window.CustomCCTPlugin
