@@ -117,7 +117,7 @@ window.CustomCCTPlugin = (function(jspsych) {
       .cct-card.flipped { background-color: #f8f9fa; }
       .cct-card.loss { background-color: #ffebee; border-color: #f44336; }
       .cct-card.gain { background-color: #e8f5e8; border-color: #4caf50; }
-      .cct-card.selected { background-color: #f8f9fa; border-color: #6c757d; border-style: dashed; }
+      .cct-card.cold-selected { border-color: #6c757d !important; border-style: dashed !important; }
       .cct-button { padding: 10px 20px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
       .cct-button:hover { background-color: #0056b3; }
     `;
@@ -153,10 +153,10 @@ window.CustomCCTPlugin = (function(jspsych) {
         card.classList.add('gain');
       }
       
-      // For cold rounds, use neutral styling to prevent visual giveaways
+      // For cold rounds, use neutral outline to prevent visual giveaways
+      // but keep the background colors (green/red) for revealed cards
       if (!hot) {
-        card.classList.remove('loss', 'gain');
-        card.classList.add('selected');
+        card.classList.add('cold-selected');
       }
       
       // Update score
