@@ -1,11 +1,9 @@
 // Custom Columbia Card Task Plugin for Full Performance Data
 // Designed to capture complete performance data from all rounds
 
-// Make the plugin globally available as a constructor function
-window.CustomCCTPlugin = function() {
-  'use strict';
-
-  this.info = {
+// Make the plugin globally available as a proper jsPsych plugin object
+window.CustomCCTPlugin = {
+  info: {
     name: 'custom-cct',
     parameters: {
       num_cards: { type: 'int', default: 32 },
@@ -16,9 +14,9 @@ window.CustomCCTPlugin = function() {
       immediate_feedback: { type: 'bool', default: false },
       button_label_stop: { type: 'string', default: 'END ROUND' }
     }
-  };
+  },
 
-  this.trial = function(display_element, trial) {
+  trial: function(display_element, trial) {
     var num_cards = trial.num_cards || 32;
     var num_loss_cards = trial.num_loss_cards || 3;
     var gain_value = trial.gain_value || 10;
@@ -163,7 +161,6 @@ window.CustomCCTPlugin = function() {
     var button = display_element.querySelector('#cct-end-round');
     button.addEventListener('click', endRound.bind(this));
   }
-
 };
 
 // Plugin is now available as window.CustomCCTPlugin
