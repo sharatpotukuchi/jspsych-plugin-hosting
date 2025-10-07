@@ -1,11 +1,11 @@
 // Custom Columbia Card Task Plugin for Full Performance Data
 // Designed to capture complete performance data from all rounds
 
-// Make the plugin globally available
-window.CustomCCTPlugin = (function() {
+// Make the plugin globally available as a constructor function
+window.CustomCCTPlugin = function() {
   'use strict';
 
-  var info = {
+  this.info = {
     name: 'custom-cct',
     parameters: {
       num_cards: { type: 'int', default: 32 },
@@ -18,7 +18,7 @@ window.CustomCCTPlugin = (function() {
     }
   };
 
-  function trial(display_element, trial) {
+  this.trial = function(display_element, trial) {
     var num_cards = trial.num_cards || 32;
     var num_loss_cards = trial.num_loss_cards || 3;
     var gain_value = trial.gain_value || 10;
@@ -164,10 +164,6 @@ window.CustomCCTPlugin = (function() {
     button.addEventListener('click', endRound.bind(this));
   }
 
-  return {
-    info: info,
-    trial: trial
-  };
-})();
+};
 
 // Plugin is now available as window.CustomCCTPlugin
